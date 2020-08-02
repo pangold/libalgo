@@ -250,7 +250,7 @@ struct linked_list *linked_list_alloc()
     return list;
 }
 
-void linked_list_free(struct linked_list *list, void(*datacb)(void *))
+void linked_list_free(struct linked_list *list, void(*freecb)(void *))
 {
     if (!list) return;
     __list_node_clear(list->head, freecb);
