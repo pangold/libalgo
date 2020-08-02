@@ -8,6 +8,12 @@
 #define NULL (void *)0
 #endif
 
+struct linked_list_node {
+    void *data;
+    struct linked_list_node *pre;
+    struct linked_list_node *next;
+};
+
 inline static struct linked_list_node *__list_node_alloc(void *data)
 {
     struct linked_list_node *node;
@@ -226,6 +232,13 @@ void linked_list_node_int_test()
     __list_node_int_print(head);
 }
 #endif
+
+struct linked_list {
+    struct linked_list_node *head;
+    struct linked_list_node *tail;
+    struct linked_list_node *current;
+    int size;
+};
 
 struct linked_list *linked_list_alloc()
 {

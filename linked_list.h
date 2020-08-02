@@ -1,18 +1,7 @@
 #ifndef __LINKED_LIST_H__
 #define __LINKED_LIST_H__
 
-struct linked_list_node {
-    void *data;
-    struct linked_list_node *pre;
-    struct linked_list_node *next;
-};
-
-struct linked_list {
-    struct linked_list_node *head;
-    struct linked_list_node *tail;
-    struct linked_list_node *current;
-    int size;
-};
+struct linked_list;
 
 struct linked_list *linked_list_alloc();
 void linked_list_free(struct linked_list *list);
