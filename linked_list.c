@@ -282,7 +282,15 @@ void linked_list_reverse(struct linked_list *list)
 
 void linked_list_sort(struct linked_list *list, int(*compare)(void *, void *))
 {
+#if defined(USE_BUBBLE_SORT)
     __list_node_bubble_sort(list->head, compare);
+#elif defined(USE_SELECT_SORT)
+    __list_node_select_sort(array, compare);
+#elif defined(USE_INSERT_SORT)
+    __list_node_insert_sort(array, compare);
+#else
+    __list_node_bubble_sort(list->head, compare);
+#endif
 }
 
 void linked_list_push_back(struct linked_list *list, void *data)
