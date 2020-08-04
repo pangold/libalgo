@@ -17,36 +17,13 @@ struct array {
     size_t current;
 };
 
-inline static struct array *__array_alloc(size_t sizeof_type)
-{
-    struct array *array;
-    array = (struct array *)malloc(sizeof(struct array));
-    if (!array) return NULL;
-    array->sizeof_type = sizeof_type;
-    array->size = sizeof_type * ARRAY_INIT_LEN;
-    array->capacity = array->size;
-    array->data = (char *)malloc(array->capacity);
-    return array;
-}
-
-inline static void __array_free(struct array *array)
-{
-    if (array->data) free(array->data);
-    free(array);
-}
-
-inline static void __array_clear(struct array *array)
-{
-    array->size = 0;
-}
-
-inline static void __array_realloc(struct array *array, size_t size)
+inline static void __array_realloc(array_t *array, size_t size)
 {
     assert(size > array->size);
     if (array->data) array->data = realloc(array->data, size);
 }
 
-inline static void __array_move_backward(struct array *array, size_t pos, size_t n) 
+inline static void __array_move_backward(array_t *array, size_t pos, size_t n) 
 {
     assert(n > 0);
     if (array->size + array->sizeof_type * n > array->capacity) 
@@ -56,7 +33,7 @@ inline static void __array_move_backward(struct array *array, size_t pos, size_t
         array->sizeof_type * (array->size - pos));
 }
 
-inline static void __array_move_frontward(struct array *array, size_t pos, size_t n)
+inline static void __array_move_frontward(array_t *array, size_t pos, size_t n)
 {
     assert(n * array->sizeof_type <= array->size);
     memmove(array->data + array->sizeof_type * (pos - n), 
@@ -64,19 +41,19 @@ inline static void __array_move_frontward(struct array *array, size_t pos, size_
         array->sizeof_type * (array->size - pos));
 }
 
-inline static void __array_push_at(struct array *array, const void *data, size_t pos)
+inline static void __array_push_at(array_t *array, const void *data, size_t pos)
 {
     __array_move_backward(array, pos, 1);
     memcpy(array->data + array->sizeof_type * pos, data, array->sizeof_type);
     array->size += array->sizeof_type;
 }
 
-inline static void __array_push_front(struct array *array, const void *data)
+inline static void __array_push_front(array_t *array, const void *data)
 {
     __array_push_at(array, data, 0);
 }
 
-inline static void __array_push_back(struct array *array, const void *data)
+inline static void __array_push_back(array_t *array, const void *data)
 {
     if (array->size == array->capacity)
         __array_realloc(array, array->capacity * 2);
@@ -84,26 +61,26 @@ inline static void __array_push_back(struct array *array, const void *data)
     array->size += array->sizeof_type;
 }
 
-inline static void __array_pop_at(struct array *array, void *data, size_t pos)
+inline static void __array_pop_at(array_t *array, void *data, size_t pos)
 {
     if (data) memcpy(data, array->data + array->sizeof_type * pos, array->sizeof_type);
     __array_move_frontward(array, pos, 1);
     array->size -= array->sizeof_type;
 }
 
-inline static void __array_pop_front(struct array *array, void *data)
+inline static void __array_pop_front(array_t *array, void *data)
 {
     __array_pop_at(array, data, array->size - array->sizeof_type);
 }
 
-inline static void __array_pop_back(struct array *array, void *data)
+inline static void __array_pop_back(array_t *array, void *data)
 {
     if (array->size == 0) return;
     array->size -= array->sizeof_type;
     if (data) memcpy(data, array->size * array->sizeof_type, array->sizeof_type);
 }
 
-static void __array_swap(struct array *array, size_t m, size_t n)
+static void __array_swap(array_t *array, size_t m, size_t n)
 {
     char *temp = (char *)malloc(array->sizeof_type);
     memcpy(temp, array->data + array->sizeof_type * m, array->sizeof_type);
@@ -112,7 +89,7 @@ static void __array_swap(struct array *array, size_t m, size_t n)
     free(temp);
 }
 
-static void __array_reverse(struct array *array)
+static void __array_reverse(array_t *array)
 {
     size_t len = array->size / array->sizeof_type;
     size_t half = len / 2;
@@ -121,47 +98,55 @@ static void __array_reverse(struct array *array)
     }
 }
 
-static void __array_bubble_sort(struct array *array, int(*compare)(void *, void *))
+static void __array_bubble_sort(array_t *array, int(*compare)(void *, void *))
 {
     
 }
 
-static void __array_select_sort(struct array *array, int(*compare)(void *, void *))
+static void __array_select_sort(array_t *array, int(*compare)(void *, void *))
 {
     
 }
 
-static void __array_insert_sort(struct array *array, int(*compare)(void *, void *))
+static void __array_insert_sort(array_t *array, int(*compare)(void *, void *))
 {
     
 }
 
-struct array *array_alloc(size_t sizeof_type)
+array_t *array_alloc(size_t sizeof_type)
 {
-    return __array_alloc(sizeof_type);
+    array_t *array;
+    array = (array_t *)malloc(sizeof(array_t));
+    if (!array) return NULL;
+    array->sizeof_type = sizeof_type;
+    array->size = sizeof_type * ARRAY_INIT_LEN;
+    array->capacity = array->size;
+    array->data = (char *)malloc(array->capacity);
+    return array;
 }
 
-void array_free(struct array *array)
+void array_free(array_t *array)
 {
-    __array_free(array);
+    if (array->data) free(array->data);
+    free(array);
 }
 
-void array_clear(struct array *array)
+void array_clear(array_t *array)
 {
-    __array_clear(array);
+    array->size = 0;
 }
 
-int  array_size(struct array *array)
+int array_size(array_t *array)
 {
     return array->size / array->sizeof_type;
 }
 
-void array_reverse(struct array *array)
+void array_reverse(array_t *array)
 {
     __array_reverse(array);
 }
 
-void array_sort(struct array *array, int(*compare)(void *, void *))
+void array_sort(array_t *array, int(*compare)(void *, void *))
 {
 #if defined(USE_BUBBLE_SORT)
     __array_bubble_sort(array, compare);
@@ -174,22 +159,22 @@ void array_sort(struct array *array, int(*compare)(void *, void *))
 #endif
 }
 
-void array_push_back(struct array *array, const void *data)
+void array_push_back(array_t *array, const void *data)
 {
     __array_push_back(array, data);
 }
 
-void array_push_front(struct array *array, const void *data)
+void array_push_front(array_t *array, const void *data)
 {
     __array_push_front(array, data);
 }
 
-void array_push_at(struct array *array, const void *data, int n)
+void array_push_at(array_t *array, const void *data, int n)
 {
     __array_push_at(array, data, n);
 }
 
-void array_push(struct array *array, void *data, int(*condition)(void *, void *), void *arg)
+void array_push(array_t *array, void *data, int(*condition)(void *, void *), void *arg)
 {
     for (int i = 0; i < array->size; i += array->sizeof_type) {
         if (condition(array->data + i, arg) != 0) {
@@ -198,22 +183,22 @@ void array_push(struct array *array, void *data, int(*condition)(void *, void *)
     }
 }
 
-void array_pop_back(struct array *array)
+void array_pop_back(array_t *array)
 {
     __array_pop_back(array, NULL);
 }
 
-void array_pop_front(struct array *array)
+void array_pop_front(array_t *array)
 {
     __array_pop_front(array, NULL);
 }
 
-void array_pop_at(struct array *array, int n)
+void array_pop_at(array_t *array, int n)
 {
     __array_pop_at(array, NULL, n);
 }
 
-void array_pop(struct array *array, int(*condition)(void *, void *), void *arg)
+void array_pop(array_t *array, int(*condition)(void *, void *), void *arg)
 {
     for (int i = 0; i < array->size; i += array->sizeof_type) {
         if (condition(array->data + i, arg) != 0) {
@@ -222,30 +207,30 @@ void array_pop(struct array *array, int(*condition)(void *, void *), void *arg)
     }
 }
 
-void *array_begin(struct array *array)
+void *array_begin(array_t *array)
 {
     array->current = 0;
     return array->data;
 }
 
-void *array_at(struct array *array, int n)
+void *array_at(array_t *array, int n)
 {
     array->current = n;
     return array->data + array->sizeof_type * n;
 }
 
-void *array_next(struct array *array)
+void *array_next(array_t *array)
 {
     array->current++;
     return array->data + array->sizeof_type * array->current;
 }
 
-void *array_end(struct array *array)
+void *array_end(array_t *array)
 {
     return array->data + array->sizeof_type * array->size;
 }
 
-void  array_foreach(struct array *array, int(*cb)(void *, void *), void *arg)
+void array_foreach(array_t *array, int(*cb)(void *, void *), void *arg)
 {
     for (int i = 0; i < array->size; i += array->sizeof_type) {
         cb(array->data + i, arg);
