@@ -80,12 +80,14 @@ inline static void __array_pop_back(array_t *array, void *data)
     if (data) memcpy(data, array->size * array->sizeof_type, array->sizeof_type);
 }
 
-static void __array_swap(array_t *array, size_t m, size_t n)
+#define array_index(n) (array->data + array->sizeof_type * (n))
+
+inline static void __array_swap(array_t *array, size_t m, size_t n)
 {
     char *temp = (char *)malloc(array->sizeof_type);
-    memcpy(temp, array->data + array->sizeof_type * m, array->sizeof_type);
-    memcpy(array->data + array->sizeof_type * m, array->data + array->sizeof_type * n, array->sizeof_type);
-    memcpy(array->data + array->sizeof_type * n, temp, array->sizeof_type);
+    memcpy(temp, array_index(m), array->sizeof_type);
+    memcpy(array_index(m), array_index(n), array->sizeof_type);
+    memcpy(array_index(n), temp, array->sizeof_type);
     free(temp);
 }
 
@@ -100,17 +102,77 @@ static void __array_reverse(array_t *array)
 
 static void __array_bubble_sort(array_t *array, int(*compare)(void *, void *))
 {
-    
+    size_t i, j, temp;
+    for (i = 0; i < array->size; i++) {
+        for (j = 0; j < array->size - 1 - i; j++) {
+            if (compare(array_index(j), array_index(j + 1)) != 0) {
+                __array_swap(array, j, j + 1);
+            }
+        }
+    }
 }
 
 static void __array_select_sort(array_t *array, int(*compare)(void *, void *))
 {
-    
+    size_t i, j;
+    for (i = 0; i < array->size - 1; i++) {
+        int index = i;
+        for (j = i + 1; j < array->size; j++) {
+            if (compare(array_index(j), array_index(index)) != 0) {
+                index = j;
+            }
+        }
+        if (index != i) {
+            __array_swap(array, index, i);
+        }
+    }
 }
 
 static void __array_insert_sort(array_t *array, int(*compare)(void *, void *))
 {
-    
+    size_t i, j;
+    char *data = (char *)malloc(array->sizeof_type);
+    for (i = 1; i < array->size; i++) {
+        memcpy(data, array_index(i), array->sizeof_type);
+        for (j = i - 1; j >= 0 && compare(data, array_index(j)) != 0; j--) {
+            memcpy(array_index(j + 1), array_index(j), array->sizeof_type);
+        }
+        memcpy(array_index(j + 1), data, array->sizeof_type);
+    }
+    free(data);
+}
+
+static void __array_quick_sort_partition(array_t *array, int(*compare)(void *, void *), size_t start, size_t end) {
+    if (start >= end) return;
+    char *mid = (char *)malloc(array->sizeof_type);
+    size_t left = start, right = end - 1;
+    memcpy(mid, array_index(end), array->sizeof_type);
+    while (left < right) {
+        while (compare(array_index(left), mid) != 0 && left < right) 
+            left++;
+        while (compare(array_index(right), mid) == 0 && left < right) 
+            right++;
+        __array_swap(array, left, right);
+    }
+    if (compare(array_index(left), array_index(right)) == 0) {
+        __array_swap(array, left, end);
+    } else {
+        left++;
+    }
+    if (left) {
+        __array_quick_sort_partition(array, compare, start, left - 1);
+    }
+    __array_quick_sort_partition(array, compare, left + 1, end);
+    free(mid);
+}
+
+static void __array_quick_sort(array_t *array, int(*compare)(void *, void *)) {
+    __array_quick_sort_partition(array, compare, 0, array->size - 1);
+}
+
+static void __array_shell_sort(array_t *array, int(*compare)(void *, void *))
+{
+
 }
 
 array_t *array_alloc(size_t sizeof_type)
@@ -154,6 +216,10 @@ void array_sort(array_t *array, int(*compare)(void *, void *))
     __array_select_sort(array, compare);
 #elif defined(USE_INSERT_SORT)
     __array_insert_sort(array, compare);
+#elif defined(USE_QUICK_SORT)
+    __array_quick_sort(array, compare);
+#elif defined(USE_SHELL_SORT)
+    __array_shell_sort(array, compare);
 #else
     __array_bubble_sort(array, compare);
 #endif
