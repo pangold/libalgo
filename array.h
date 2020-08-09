@@ -19,6 +19,7 @@ void array_pop_front(array_t *array);
 void array_pop_at(array_t *array, int n);
 
 void *array_data(array_t *array);
+void *array_at(array_t *array, int n);
 void array_foreach(array_t *array, int(*cb)(void *, void *), void *arg);
 
 #endif

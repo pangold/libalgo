@@ -91,7 +91,7 @@ inline static void __array_pop_back(array_t *array, void *data)
     array->size -= array->sizeof_type;
 }
 
-inline static void __array_swap(array_t *array, size_t m, size_t n)
+inline void __array_swap(array_t *array, size_t m, size_t n)
 {
     char *temp = (char *)malloc(array->sizeof_type);
     memcpy(temp, ARRAY_INDEX(m), array->sizeof_type);
@@ -314,6 +314,11 @@ void array_pop_at(array_t *array, int n)
 void *array_data(array_t *array)
 {
     return array->data;
+}
+
+void *array_at(array_t *array, int n)
+{
+    return ARRAY_INDEX(n);
 }
 
 void array_foreach(array_t *array, int(*cb)(void *, void *), void *arg)
