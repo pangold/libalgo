@@ -29,6 +29,27 @@ typedef struct rb_tree {
     void  (*value_free)(void *);
 } rb_tree_t;
 
+static rb_tree_node_t *rb_tree_node_alloc(void *key, void *value)
+{
+    rb_tree_node_t *node = (rb_tree_node_t *)malloc(sizeof(rb_tree_node_t));
+    if (!node) return NULL;
+    node->color = RED;
+    node->key = key;
+    node->value = value;
+    node->left = NULL;
+    node->right = NULL;
+    node->parent = NULL;
+    return node;
+}
+
+static void rb_tree_node_free(rb_tree_node_t *node, void *arg)
+{
+    rb_tree_t *tree = (rb_tree_t *)arg;
+    if (tree && tree->key_free && node->key) tree->key_free(node->key);
+    if (tree && tree->value_free && node->value) tree->value_free(node->value);
+    free(node);
+}
+
 static void rb_tree_node_pre_order_0(rb_tree_node_t *root, void(*cb)(rb_tree_node_t *, void *), void *arg)
 {
     if (!root) return;
@@ -113,7 +134,7 @@ static void rb_tree_node_in_order_2(rb_tree_node_t *root, void(*cb)(rb_tree_node
         }
         pre = node->left;
         while (pre->right && pre->right != node) pre = pre->right;
-        if (!pre->right) {
+        if (pre->right) {
             pre->right = NULL;
             cb(node, arg);
             node = node->right;
@@ -180,8 +201,8 @@ static void rb_tree_node_reverse_cb(rb_tree_node_t *n1, rb_tree_node_t *n2, void
 static void rb_tree_node_post_order_2(rb_tree_node_t *root, void(*cb)(rb_tree_node_t *, void *), void *arg)
 {
     if (!root) return;
-    rb_tree_node_t *pre, *node;
-    rb_tree_node_t *dummy = (rb_tree_node_t *)malloc(sizeof(rb_tree_node_t));
+    rb_tree_node_t *pre, *node, *dummy;
+    dummy = rb_tree_node_alloc(NULL, NULL);
     dummy->left = root;
     for (node = dummy; node; ) {
         if (!node->left) {
@@ -199,7 +220,7 @@ static void rb_tree_node_post_order_2(rb_tree_node_t *root, void(*cb)(rb_tree_no
         pre->right = NULL;
         node = node->right;
     }
-    free(dummy);
+    rb_tree_node_free(dummy, NULL);
 }
 
 static rb_tree_node_t *rb_tree_node_search(rb_tree_node_t *root, void *key, int(*compare)(void *, void *))
@@ -215,18 +236,6 @@ static rb_tree_node_t *rb_tree_node_search(rb_tree_node_t *root, void *key, int(
     return NULL;
 }
 
-/* 
- *
- *      px                              px
- *     /                               /
- *    x                               y                
- *   /  \      --(left rotate)-->    / \                #
- *  lx   y                          x  ry     
- *     /   \                       /  \
- *    ly   ry                     lx  ly  
- *
- *
- */
 static void rb_tree_node_left_rotate(rb_tree_t *tree, rb_tree_node_t *x)
 {
     rb_tree_node_t *y;
@@ -247,17 +256,6 @@ static void rb_tree_node_left_rotate(rb_tree_t *tree, rb_tree_node_t *x)
     x->parent = y;
 }
 
-/* 
- *
- *            py                               py
- *           /                                /
- *          y                                x                  
- *         /  \    --(right rotate)-->      /  \                     #
- *        x   ry                           lx   y  
- *       / \                                   / \                   #
- *      lx  rx                                rx  ry
- * 
- */
 static void rb_tree_node_right_rotate(rb_tree_t *tree, rb_tree_node_t *y)
 {
     rb_tree_node_t *x;
@@ -278,51 +276,52 @@ static void rb_tree_node_right_rotate(rb_tree_t *tree, rb_tree_node_t *y)
     y->parent = x;
 }
 
-static void rb_tree_insert_fixup_left(rb_tree_t *tree, rb_tree_node_t **node)
+static rb_tree_node_t *rb_tree_insert_fixup_left(rb_tree_t *tree, rb_tree_node_t *node)
 {
-    rb_tree_node_t *temp = (*node)->parent->parent->right;
-    if (temp->color == RED) {
-        (*node)->parent->color = BLACK;
-        (*node)->parent->parent->color = RED;
+    rb_tree_node_t *temp = node->parent->parent->right;
+    if (temp && temp->color == RED) {
         temp->color = BLACK;
-        (*node) = (*node)->parent->parent;
-    } else if ((*node) == (*node)->parent->right) {
-        (*node) = (*node)->parent;
-        rb_tree_node_left_rotate(tree, (*node));
-    } else {
-        (*node)->parent->color = BLACK;
-        (*node)->parent->parent->color = RED;
-        rb_tree_node_right_rotate(tree, (*node)->parent->parent);
+        node->parent->color = BLACK;
+        node->parent->parent->color = RED;
+        return node->parent->parent;
     }
+    if (node == node->parent->right) {
+        node = node->parent;
+        rb_tree_node_left_rotate(tree, node);
+    }
+    node->parent->color = BLACK;
+    node->parent->parent->color = RED;
+    rb_tree_node_right_rotate(tree, node->parent->parent);
+    return node;
 }
 
-static void rb_tree_insert_fixup_right(rb_tree_t *tree, rb_tree_node_t **node)
+static rb_tree_node_t *rb_tree_insert_fixup_right(rb_tree_t *tree, rb_tree_node_t *node)
 {
-    rb_tree_node_t *temp = (*node)->parent->parent->left;
-    if (temp->color == RED) {
-        (*node)->parent->color = BLACK;
-        (*node)->parent->parent->color = RED;
+    rb_tree_node_t *temp = node->parent->parent->left;
+    if (temp && temp->color == RED) {
         temp->color = BLACK;
-        (*node) = (*node)->parent->parent;
-    } else if ((*node) == (*node)->parent->left) {
-        (*node) = (*node)->parent;
-        rb_tree_node_right_rotate(tree, (*node));
-    } else {
-        (*node)->parent->color = BLACK;
-        (*node)->parent->parent->color = RED;
-        rb_tree_node_left_rotate(tree, (*node)->parent->parent);
+        node->parent->color = BLACK;
+        node->parent->parent->color = RED;
+        return node->parent->parent;
     }
+    if (node == node->parent->left) {
+        node = node->parent;
+        rb_tree_node_right_rotate(tree, node);
+    }
+    node->parent->color = BLACK;
+    node->parent->parent->color = RED;
+    rb_tree_node_left_rotate(tree, node->parent->parent);
+    return node;
 }
 
 static void rb_tree_insert_fixup(rb_tree_t *tree, rb_tree_node_t *node)
 {
-    rb_tree_node_t *temp;
-    while (node != tree->root && node->parent->color == RED) {
-        if (node->parent == node->parent->parent->left) {
-            rb_tree_insert_fixup_left(tree, &node);
-        } else {
-            rb_tree_insert_fixup_right(tree, &node);
-        }
+    rb_tree_node_t*(*fixup)(rb_tree_t *, rb_tree_node_t *);
+    while (node->parent && node->parent->color == RED) {
+        fixup = (node->parent == node->parent->parent->left)
+            ? rb_tree_insert_fixup_left
+            : rb_tree_insert_fixup_right;
+        node = fixup(tree, node);
     }
     tree->root->color = BLACK;
 }
@@ -505,27 +504,6 @@ static void rb_tree_delete(rb_tree_t *tree, rb_tree_node_t *node)
     if (color == BLACK) {
         rb_tree_delete_fixup(tree, child, parent);
     }
-    free(node);
-}
-
-static rb_tree_node_t *rb_tree_node_alloc(void *key, void *value)
-{
-    rb_tree_node_t *node = (rb_tree_node_t *)malloc(sizeof(rb_tree_node_t));
-    if (!node) return NULL;
-    node->color  = RED;
-    node->key    = key;
-    node->value  = value;
-    node->left   = NULL;
-    node->right  = NULL;
-    node->parent = NULL;
-    return node;
-}
-
-static void rb_tree_node_free(rb_tree_node_t *node, void *arg)
-{
-    rb_tree_t *tree = (rb_tree_t *)arg;
-    if (tree && tree->key_free && node->key) tree->key_free(node->key);
-    if (tree && tree->value_free && node->value) tree->value_free(node->value);
     free(node);
 }
 
