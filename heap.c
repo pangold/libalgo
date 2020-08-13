@@ -5,10 +5,10 @@
 #include "heap.h"
 #include "array.h"
 
-struct heap {
+typedef struct heap {
     array_t *data;
     int    (*compare)(void *, void *);
-};
+} heap_t;
 
 static heap_t *__heap_alloc(int sizeof_type, int(*compare)(void *, void *))
 {

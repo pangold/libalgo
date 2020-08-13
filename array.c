@@ -14,12 +14,12 @@
 #define ARRAY_LINDEX(n) (array->data + ARRAY_LSIZE(n))
 #define ARRAY_LENGTH    (array->size / array->sizeof_type)
 
-struct array {
+typedef struct array {
     char  *data;
     size_t sizeof_type;
     size_t size;
     size_t capacity;
-};
+} array_t;
 
 inline static array_t *__array_alloc(size_t sizeof_type)
 {

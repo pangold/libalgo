@@ -18,6 +18,12 @@ void rb_tree_pop(rb_tree_t *tree, void *key);
 
 void *rb_tree_find(rb_tree_t *tree, void *key);
 void *rb_tree_at(rb_tree_t *tree, size_t n);
-void rb_tree_foreach(rb_tree_t *tree, void(*cb)(void *, void *, void *), void *arg);
+void *rb_tree_front(rb_tree_t *tree);
+void *rb_tree_back(rb_tree_t *tree);
+
+void *rb_tree_begin(rb_tree_t *tree);
+void *rb_tree_end(rb_tree_t *tree);
+void *rb_tree_next(rb_tree_t *tree);
+void  rb_tree_foreach(rb_tree_t *tree, void(*cb)(void *, void *, void *), void *arg);
 
 #endif

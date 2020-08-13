@@ -8,16 +8,16 @@
 #define NULL (void *)0
 #endif
 
-struct list_node {
+typedef struct list_node {
     void *data;
     struct list_node *pre;
     struct list_node *next;
-};
+} list_node_t;
 
-inline static struct list_node *__list_node_alloc(void *data)
+inline static list_node_t *__list_node_alloc(void *data)
 {
-    struct list_node *node;
-    node = (struct list_node *)malloc(sizeof(struct list_node));
+    list_node_t *node;
+    node = (list_node_t *)malloc(sizeof(list_node_t));
     if (!node) return NULL;
     node->data = data;
     node->pre = NULL;
@@ -25,16 +25,16 @@ inline static struct list_node *__list_node_alloc(void *data)
     return node;
 }
 
-inline static void *__list_node_free(struct list_node *src)
+inline static void *__list_node_free(list_node_t *src)
 {
     void *data = src->data;
     free(src);
     return data;
 }
 
-inline static void __list_node_clear(struct list_node *head, void(*freecb)(void *))
+inline static void __list_node_clear(list_node_t *head, void(*freecb)(void *))
 {
-    struct list_node *node, *temp = NULL;
+    list_node_t *node, *temp = NULL;
     for (node = head; node && node->next; node = temp) {
         if (freecb) freecb(node->data);
         temp = node->next;
@@ -42,29 +42,29 @@ inline static void __list_node_clear(struct list_node *head, void(*freecb)(void 
     }
 }
 
-inline static struct list_node *__list_node_first(struct list_node *src)
+inline static list_node_t *__list_node_first(list_node_t *src)
 {
-    struct list_node *node = NULL;
+    list_node_t *node = NULL;
     for (node = src; node && node->pre; node = node->pre);
     return node;
 }
 
-inline static struct list_node *__list_node_last(struct list_node *src)
+inline static list_node_t *__list_node_last(list_node_t *src)
 {
-    struct list_node *node = NULL;
+    list_node_t *node = NULL;
     for (node = src; node && node->next; node = node->next);
     return node;
 }
 
-inline static struct list_node *__list_node_at(struct list_node *src, int n)
+inline static list_node_t *__list_node_at(list_node_t *src, int n)
 {
     int i = 0;
-    struct list_node *node = NULL;
+    list_node_t *node = NULL;
     for (node = src; node && node->next && i < n; node = node->next, i++);
     return node;
 }
 
-inline static void __list_node_push_after(struct list_node *src, struct list_node *node)
+inline static void __list_node_push_after(list_node_t *src, list_node_t *node)
 {
     if (!src || !node) return;
     if (src->next) src->next->pre = node;
@@ -73,7 +73,7 @@ inline static void __list_node_push_after(struct list_node *src, struct list_nod
     src->next = node;
 }
 
-inline static void __list_node_push_before(struct list_node *src, struct list_node *node)
+inline static void __list_node_push_before(list_node_t *src, list_node_t *node)
 {
     if (!src || !node) return;
     if (src->pre) src->pre->next = node;
@@ -82,17 +82,17 @@ inline static void __list_node_push_before(struct list_node *src, struct list_no
     src->pre = node;
 }
 
-inline static void __list_node_push_back(struct list_node *src, struct list_node *node)
+inline static void __list_node_push_back(list_node_t *src, list_node_t *node)
 {
     __list_node_push_after(__list_node_last(src), node);
 }
 
-inline static void __list_node_push_front(struct list_node *src, struct list_node *node)
+inline static void __list_node_push_front(list_node_t *src, list_node_t *node)
 {
     __list_node_push_before(__list_node_first(src), node);
 }
 
-inline static struct list_node *__list_node_pop_self(struct list_node *src)
+inline static list_node_t *__list_node_pop_self(list_node_t *src)
 {
     if (!src) return NULL;
     if (src->pre) src->pre->next = src->next;
@@ -102,36 +102,36 @@ inline static struct list_node *__list_node_pop_self(struct list_node *src)
     return src;
 }
 
-inline static struct list_node *__list_node_pop_back(struct list_node *src)
+inline static list_node_t *__list_node_pop_back(list_node_t *src)
 {
     return __list_node_pop_self(__list_node_last(src));
 }
 
-inline static struct list_node *__list_node_pop_front(struct list_node *src)
+inline static list_node_t *__list_node_pop_front(list_node_t *src)
 {
     return __list_node_pop_self(__list_node_first(src));
 }
 
-inline static struct list_node *__list_node_pop_after(struct list_node *src)
+inline static list_node_t *__list_node_pop_after(list_node_t *src)
 {
     return __list_node_pop_self(src->next);
 }
 
-inline static struct list_node *__list_node_pop_before(struct list_node *src)
+inline static list_node_t *__list_node_pop_before(list_node_t *src)
 {
     return __list_node_pop_self(src->pre);
 }
 
-inline static void __list_node_swap_data(struct list_node *node1, struct list_node *node2)
+inline static void __list_node_swap_data(list_node_t *node1, list_node_t *node2)
 {
     void *temp = node1->data;
     node1->data = node2->data;
     node2->data = temp;
 }
 
-static void __list_node_reverse(struct list_node *head)
+static void __list_node_reverse(list_node_t *head)
 {
-    struct list_node *node, *temp;
+    list_node_t *node, *temp;
     for (node = head; node; node = node->pre) {
         temp = node->pre;
         node->pre = node->next;
@@ -139,9 +139,9 @@ static void __list_node_reverse(struct list_node *head)
     }
 }
 
-static void __list_node_bubble_sort(struct list_node *head, int(*compare)(void *, void *))
+static void __list_node_bubble_sort(list_node_t *head, int(*compare)(void *, void *))
 {
-    struct list_node *i, *j, *last = NULL;
+    list_node_t *i, *j, *last = NULL;
     for (i = head; i && i->next; i = i->next) {
         for (j = head; j && j->next && j != last; j = j->next) {
             if (compare(j->next->data, j->data) != 0) {
@@ -153,11 +153,11 @@ static void __list_node_bubble_sort(struct list_node *head, int(*compare)(void *
     }
 }
 
-static void __list_node_select_sort(struct list_node *head, int(*compare)(void *, void *))
+static void __list_node_select_sort(list_node_t *head, int(*compare)(void *, void *))
 {
-    struct list_node *i, *j;
+    list_node_t *i, *j;
     for (i = head; i && i->next; i = i->next) {
-        struct list_node *target = i;
+        list_node_t *target = i;
         for (j = i->next; j; j = j->next) {
             if (compare(j->data, target->data) != 0)
                 target = j;
@@ -168,9 +168,9 @@ static void __list_node_select_sort(struct list_node *head, int(*compare)(void *
     }
 }
 
-static void __list_node_insert_sort(struct list_node *head, int(*compare)(void *, void *))
+static void __list_node_insert_sort(list_node_t *head, int(*compare)(void *, void *))
 {
-    struct list_node *i, *j;
+    list_node_t *i, *j;
     if (!head) return;
     for (i = head->next; i; i = i->next) {
         void *data = i->data;
@@ -191,9 +191,9 @@ static int __compare_int_less_than(void *i1, void *i2)
 {
     return *(int *)i1 < *(int *)i2;
 }
-static void __list_node_int_print(struct list_node *head)
+static void __list_node_int_print(list_node_t *head)
 {
-    struct list_node *node;
+    list_node_t *node;
     for (node = head; node; node = node->next) {
         printf("%i ", *(int*)node->data);
     }
@@ -201,7 +201,7 @@ static void __list_node_int_print(struct list_node *head)
 }
 void list_node_int_test()
 {
-    struct list_node *head;
+    list_node_t *head;
     int int_array[] = { 10, 2, 5, 8, 3, 7, 4, 6, 9, 1 };
     head = __list_node_alloc(&int_array[0]);
     __list_node_push_back(head, __list_node_alloc(&int_array[1]));
@@ -226,19 +226,19 @@ void list_node_int_test()
     // print
     __list_node_int_print(head);
     // pop
-    struct list_node *pop1 = __list_node_pop_before(head->next->next);
+    list_node_t *pop1 = __list_node_pop_before(head->next->next);
     __list_node_free(pop1);
     // print
     __list_node_int_print(head);
 }
 #endif
 
-struct list {
-    struct list_node *head;
-    struct list_node *tail;
-    struct list_node *current;
+typedef struct list {
+    list_node_t *head;
+    list_node_t *tail;
+    list_node_t *current;
     int size;
-};
+} list_t;
 
 list_t *list_alloc()
 {
@@ -273,7 +273,7 @@ int list_size(list_t *list)
 
 void list_reverse(list_t *list)
 {
-    struct list_node *temp;
+    list_node_t *temp;
     __list_node_reverse(list->head);
     temp = list->head;
     list->head = list->tail;
@@ -295,7 +295,7 @@ void list_sort(list_t *list, int(*compare)(void *, void *))
 
 void list_push_back(list_t *list, void *data)
 {
-    struct list_node *node;
+    list_node_t *node;
     node = __list_node_alloc(data);
     if (!node) return;
     if (list->tail) __list_node_push_after(list->tail, node);
@@ -306,7 +306,7 @@ void list_push_back(list_t *list, void *data)
 
 void list_push_front(list_t *list, void *data)
 {
-    struct list_node *node;
+    list_node_t *node;
     node = __list_node_alloc(data);
     if (!node) return;
     if (list->head) __list_node_push_before(list->head, node);
@@ -317,7 +317,7 @@ void list_push_front(list_t *list, void *data)
 
 void list_push_at(list_t *list, void *data, int n)
 {
-    struct list_node *node, *pos;
+    list_node_t *node, *pos;
     pos = __list_node_at(list->head, n);
     if (!pos) return;
     node = __list_node_alloc(data);
@@ -329,7 +329,7 @@ void list_push_at(list_t *list, void *data, int n)
 
 void list_push(list_t *list, void *data, int(*condition)(void *, void *), void *arg)
 {
-    struct list_node *node, *new_node;
+    list_node_t *node, *new_node;
     for (node = list->head; node; node = node->next) {
         if (condition(node->data, arg) != 0) {
             new_node = __list_node_alloc(data);
@@ -343,7 +343,7 @@ void list_push(list_t *list, void *data, int(*condition)(void *, void *), void *
 
 void *list_pop_back(list_t *list)
 {
-    struct list_node *popped;
+    list_node_t *popped;
     if (!list->tail) return NULL;
     popped = __list_node_pop_self(list->tail);
     if (--list->size == 0) {
@@ -360,7 +360,7 @@ void *list_pop_back(list_t *list)
 
 void *list_pop_front(list_t *list)
 {
-    struct list_node *popped;
+    list_node_t *popped;
     if (!list->head) return NULL;
     popped = __list_node_pop_self(list->head);
     if (--list->size == 0) {
@@ -377,7 +377,7 @@ void *list_pop_front(list_t *list)
 
 void *list_pop_at(list_t *list, int n)
 {
-    struct list_node *node, *popped;
+    list_node_t *node, *popped;
     node = __list_node_at(list->head, n);
     if (!node) return NULL;
     popped = __list_node_pop_self(node);
@@ -397,7 +397,7 @@ void *list_pop_at(list_t *list, int n)
 
 void *list_pop(list_t *list, int(*condition)(void *, void *), void *arg)
 {
-    struct list_node *node = NULL;
+    list_node_t *node = NULL;
     for (node = list->head; node; node = node->next) {
         if (condition(node->data, arg) != 0) {
             if (list->current == node) {
@@ -435,7 +435,7 @@ void *list_end(list_t *list)
 
 void *list_at(list_t *list, int n)
 {
-    struct list_node *node;
+    list_node_t *node;
     node = __list_node_at(list->head, n);
     if (!node) return NULL;
     list->current = node;
@@ -452,7 +452,7 @@ void *list_next(list_t *list)
 
 void list_foreach(list_t *list, void(*cb)(void *, void *), void *arg)
 {
-    struct list_node *node = NULL;
+    list_node_t *node = NULL;
     for (node = list->head; node; node = node->next) {
         cb(node->data, arg);
     }
