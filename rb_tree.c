@@ -18,7 +18,7 @@ typedef struct rb_tree_node {
 
 typedef struct rb_tree {
     struct rb_tree_node *root;
-    int(*compare)(void *, void *); /* nagetive: less than; zero: equal; passive: more than */
+    int (*compare)(void *, void *); /* nagetive: less than; zero: equal; passive: more than */
     size_t size;
 } rb_tree_t;
 
@@ -519,18 +519,18 @@ static void __rb_tree_node_free_cb(rb_tree_node_t *node, void *arg)
     if (freecb) freecb(data);
 }
 
-void rb_tree_clear(rb_tree_t *tree, rb_tree_free_t freecb)
+void rb_tree_clear(rb_tree_t *tree, rb_tree_free_t cb)
 {
     if (!tree) return;
-    __rb_tree_node_post_order_0(tree->root, __rb_tree_node_free_cb, freecb);
+    __rb_tree_node_post_order_0(tree->root, __rb_tree_node_free_cb, cb);
     tree->root = NULL;
     tree->size = 0;
 }
 
-void rb_tree_free(rb_tree_t *tree, rb_tree_free_t freecb)
+void rb_tree_free(rb_tree_t *tree, rb_tree_free_t cb)
 {
     if (!tree) return;
-    __rb_tree_node_post_order_0(tree->root, __rb_tree_node_free_cb, freecb);
+    __rb_tree_node_post_order_0(tree->root, __rb_tree_node_free_cb, cb);
     free(tree);
 }
 
@@ -610,7 +610,7 @@ static void __rb_tree_foreach_cb(rb_tree_node_t *node, void *arg)
 {
     struct __rb_tree_foreach_user_cb *ucb;
     ucb = (struct __rb_tree_foreach_user_cb *)arg;
-    printf("value: %d, color: %d\n", *(int *)node->data, node->color);
+    // printf("value: %d, color: %d\n", *(int *)node->data, node->color);
     if (ucb) ucb->func(node->data, ucb->arg);
 }
 
