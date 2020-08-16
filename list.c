@@ -182,7 +182,7 @@ static void __list_node_insert_sort(list_node_t *head, int(*compare)(void *, voi
     }
 }
 
-#if defined(ENABLE_LIST_TEST)
+#if defined(ENABLE_LIST_NODE_TEST)
 static int __compare_int_more_than(void *i1, void *i2)
 {
     return *(int *)i1 > *(int *)i2;
@@ -458,7 +458,15 @@ void list_foreach(list_t *list, void(*cb)(void *, void *), void *arg)
     }
 }
 
-#if defined(ENABLE_LINKED_LIST_TEST)
+#if defined(ENABLE_LIST_TEST)
+static int __compare_int_more_than(void *i1, void *i2)
+{
+    return *(int *)i1 > *(int *)i2;
+}
+static int __compare_int_less_than(void *i1, void *i2)
+{
+    return *(int *)i1 < *(int *)i2;
+}
 static void list_print(list_t *list)
 {
     int *data;

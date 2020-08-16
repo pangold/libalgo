@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if defined(ENABLE_LIST)
+#if defined(ENABLE_LIST_TEST)
 #include "list.c"
 #endif
 
@@ -67,7 +67,6 @@ int main(int argc, char **argv)
 {
 
 #if defined(ENABLE_LIST_TEST)
-    list_node_int_test();
     list_int_test();
 #endif
 
