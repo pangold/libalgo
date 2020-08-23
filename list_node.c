@@ -12,7 +12,6 @@ typedef struct double_list_node {
     struct double_list_node *next;
 } double_list_node_t, dcircle_list_node_t;
 
-
 /**
  * alloc API
  */
@@ -236,6 +235,45 @@ inline static dcircle_list_node_t *dcircle_list_node_last(dcircle_list_node_t *h
 {
     if (!head) return NULL;
     return head->pre;
+}
+
+/**
+ * size API
+ */
+inline static int single_list_node_size(single_list_node_t *head)
+{
+    int size = 0;
+    if (!head) return size;
+    single_list_node_t *node;
+    for (node = head; node->next; node = node->next, size++);
+    return size;
+}
+
+inline static int double_list_node_size(double_list_node_t *head)
+{
+    int size = 0;
+    if (!head) return size;
+    double_list_node_t *node;
+    for (node = head; node->next; node = node->next, size++);
+    return size;
+}
+
+inline static int scircle_list_node_size(scircle_list_node_t *head)
+{
+    int size = 0;
+    if (!head) return size;
+    scircle_list_node_t *node = head;
+    for (node = head->next; node->next != head; node = node->next, size++);
+    return size;
+}
+
+inline static int dcircle_list_node_size(dcircle_list_node_t *head)
+{
+    int size = 0;
+    if (!head) return size;
+    dcircle_list_node_t *node = head;
+    for (node = head->next; node->next != head; node = node->next, size++);
+    return size;
 }
 
 /**

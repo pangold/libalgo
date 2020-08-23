@@ -53,7 +53,7 @@ static void __rb_tree_node_pre_order_1(rb_tree_node_t *root, void(*cb)(rb_tree_n
 {
     if (!root) return;
     rb_tree_node_t *node;
-    stack_t *stack = stack_alloc();
+    algo_stack_t *stack = stack_alloc();
     stack_push(stack, root);
     while (stack_size(stack) != 0) {
         node = (rb_tree_node_t *)stack_pop(stack);
@@ -98,7 +98,7 @@ static void __rb_tree_node_in_order_0(rb_tree_node_t *root, void(*cb)(rb_tree_no
 static void __rb_tree_node_in_order_1(rb_tree_node_t *root, void(*cb)(rb_tree_node_t *, void *), void *arg)
 {
     if (!root) return;
-    stack_t *stack = stack_alloc();
+    algo_stack_t *stack = stack_alloc();
     rb_tree_node_t *node = root;
     while (node || stack_size(stack) != 0) {
         if (!node) {
@@ -148,8 +148,8 @@ static void __rb_tree_node_post_order_1(rb_tree_node_t *root, void(*cb)(rb_tree_
 {
     if (!root) return;
     rb_tree_node_t *pre, *node;
-    stack_t *stack = stack_alloc();
-    stack_t *stack2 = stack_alloc();
+    algo_stack_t *stack = stack_alloc();
+    algo_stack_t *stack2 = stack_alloc();
     stack_push(stack, root);
     while (stack_size(stack) != 0) {
         node = (rb_tree_node_t *)stack_pop(stack);

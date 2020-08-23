@@ -27,6 +27,6 @@ void *list_begin(list_t *list);
 void *list_at(list_t *list, int n);
 void *list_next(list_t *list);
 void *list_end(list_t *list);
-void  list_foreach(list_t *list, int(*cb)(void *, void *), void *arg);
+void  list_foreach(list_t *list, void(*cb)(void *, void *), void *arg);
 
 #endif

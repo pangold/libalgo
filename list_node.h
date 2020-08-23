@@ -47,6 +47,14 @@ inline static scircle_list_node_t *scircle_list_node_last(scircle_list_node_t *h
 inline static dcircle_list_node_t *dcircle_list_node_last(dcircle_list_node_t *head);
 
 /**
+ * size API
+ */
+inline static int single_list_node_size(single_list_node_t *head);
+inline static int double_list_node_size(double_list_node_t *head);
+inline static int scircle_list_node_size(scircle_list_node_t *head);
+inline static int dcircle_list_node_size(dcircle_list_node_t *head);
+
+/**
  * push after API
  */
 inline static void single_list_node_push_after(single_list_node_t *node, single_list_node_t *next);
@@ -87,5 +95,11 @@ inline static single_list_node_t *single_list_node_reverse(single_list_node_t *h
 inline static double_list_node_t *double_list_node_reverse(double_list_node_t *head);
 inline static scircle_list_node_t *scircle_list_node_reverse(scircle_list_node_t *head);
 inline static dcircle_list_node_t *dcircle_list_node_reverse(dcircle_list_node_t *head);
+
+/**
+ * sort API
+ * @return new head
+ */
+inline static single_list_node_t *single_list_node_sort(single_list_node_t *head);
 
 #endif
