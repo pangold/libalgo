@@ -1,16 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-typedef struct single_list_node {
-    void *data;
-    struct single_list_node *next;
-} single_list_node_t, scircle_list_node_t;
-
-typedef struct double_list_node {
-    void *data;
-    struct double_list_node *pre;
-    struct double_list_node *next;
-} double_list_node_t, dcircle_list_node_t;
+#include "list_node.h"
 
 /**
  * alloc API
