@@ -5,18 +5,18 @@ AM_CFLAGS = -Wall -fno-strict-aliasing -std=gnu99 -D_GNU_SOURCE
 
 lib_LTLIBRARIES = libalgo.la
 
-libfogdev_la_SOURCES = array.c
-libfogdev_la_SOURCES += heap.c
-libfogdev_la_SOURCES += list.c
-libfogdev_la_SOURCES += stack.c
-libfogdev_la_SOURCES += queue.c
-libfogdev_la_SOURCES += rb_tree.c
-libfogdev_la_SOURCES += sorted_set.c
-libfogdev_la_SOURCES += hash_map.c
+libalgo_la_SOURCES = array.c
+libalgo_la_SOURCES += heap.c
+libalgo_la_SOURCES += list.c
+libalgo_la_SOURCES += stack.c
+libalgo_la_SOURCES += queue.c
+libalgo_la_SOURCES += rb_tree.c
+libalgo_la_SOURCES += sorted_set.c
+libalgo_la_SOURCES += hash_map.c
 
-libfogdev_la_LDFLAGS = -static
+libalgo_la_LDFLAGS = -static
 
-libfogdev_la_CFLAGS = $(AM_CFLAGS)
+libalgo_la_CFLAGS = $(AM_CFLAGS)
 
 ## algo_test
 ## 
