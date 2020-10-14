@@ -25,8 +25,8 @@ option (enable_test   "enable test" ON)
 ######################################################
 # Sources
 ######################################################
-set (file_inc array.h hash_map.h heap.h list.h map.h queue.h rb_tree.h sorted_set.h stack.h)
-set (file_src array.c hash_map.c heap.c list.c map.c queue.c rb_tree.c sorted_set.c stack.c)
+set (file_inc array.h hash_map.h heap.h list.h map.h queue.h rb_tree.h sorted_set.h stack.h list_node.h binary_tree_node.h)
+set (file_src array.c hash_map.c heap.c list.c map.c queue.c rb_tree.c sorted_set.c stack.c list_node.c binary_tree_node.c)
 
 # set output name
 if (WIN32)
@@ -67,6 +67,7 @@ endif ()
 if (${enable_test})
   add_definitions(-DENABLE_LIST_TEST -DENABLE_ARRAY_TEST -DENABLE_HEAP_TEST -DENABLE_RBTREE_TEST)
   add_definitions(-DENABLE_SORTED_SET_TEST -DENABLE_MAP_TEST -DENABLE_HASH_MAP_TEST -DENABLE_QUEUE_TEST -DENABLE_STACK_TEST)
+  add_definitions(-DENABLE_BINARY_TREE_TEST -DENABLE_LIST_NODE_TEST)
   # add bin program
   set (target_bin ${name}-test)
   add_executable(${target_bin} algo_test.c algo.h)

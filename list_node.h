@@ -22,6 +22,8 @@ static void double_list_node_clear(double_list_node_t *head, void(*dfree)(void *
 static void scircle_list_node_clear(scircle_list_node_t *head, void(*dfree)(void *));
 static void dcircle_list_node_clear(dcircle_list_node_t *head, void(*dfree)(void *));
 
+static void single_list_node_foreach(single_list_node_t *head, void(*cb)(single_list_node_t *, void *), void *arg);
+
 static single_list_node_t *single_list_node_find(single_list_node_t *head, void *data, int(*compare)(void *, void *));
 static double_list_node_t *double_list_node_find(double_list_node_t *head, void *data, int(*compare)(void *, void *));
 static scircle_list_node_t *scircle_list_node_find(scircle_list_node_t *head, void *data, int(*compare)(void *, void *));

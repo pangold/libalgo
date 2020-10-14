@@ -182,57 +182,6 @@ static void __list_node_insert_sort(list_node_t *head, int(*compare)(void *, voi
     }
 }
 
-#if defined(ENABLE_LIST_NODE_TEST)
-static int __compare_int_more_than(void *i1, void *i2)
-{
-    return *(int *)i1 > *(int *)i2;
-}
-static int __compare_int_less_than(void *i1, void *i2)
-{
-    return *(int *)i1 < *(int *)i2;
-}
-static void __list_node_int_print(list_node_t *head)
-{
-    list_node_t *node;
-    for (node = head; node; node = node->next) {
-        printf("%i ", *(int*)node->data);
-    }
-    printf("\n");
-}
-void list_node_int_test()
-{
-    list_node_t *head;
-    int int_array[] = { 10, 2, 5, 8, 3, 7, 4, 6, 9, 1 };
-    head = __list_node_alloc(&int_array[0]);
-    __list_node_push_back(head, __list_node_alloc(&int_array[1]));
-    __list_node_push_back(head, __list_node_alloc(&int_array[2]));
-    __list_node_push_back(head, __list_node_alloc(&int_array[3]));
-    __list_node_push_back(head, __list_node_alloc(&int_array[4]));
-    __list_node_push_back(head, __list_node_alloc(&int_array[5]));
-    __list_node_push_front(head, __list_node_alloc(&int_array[6]));
-    __list_node_push_front(head, __list_node_alloc(&int_array[7]));
-    __list_node_push_front(head, __list_node_alloc(&int_array[8]));
-    __list_node_push_front(head, __list_node_alloc(&int_array[9]));
-    head = __list_node_first(head);
-    // print
-    __list_node_int_print(head);
-    // sort
-    __list_node_insert_sort(head, __compare_int_less_than);
-    // print
-    __list_node_int_print(head);
-    // reverse
-    __list_node_reverse(head);
-    head = __list_node_first(head);
-    // print
-    __list_node_int_print(head);
-    // pop
-    list_node_t *pop1 = __list_node_pop_before(head->next->next);
-    __list_node_free(pop1);
-    // print
-    __list_node_int_print(head);
-}
-#endif
-
 typedef struct list {
     list_node_t *head;
     list_node_t *tail;
@@ -459,11 +408,11 @@ void list_foreach(list_t *list, void(*cb)(void *, void *), void *arg)
 }
 
 #if defined(ENABLE_LIST_TEST)
-static int __compare_int_more_than(void *i1, void *i2)
+static int list_int_more_than(void *i1, void *i2)
 {
     return *(int *)i1 > *(int *)i2;
 }
-static int __compare_int_less_than(void *i1, void *i2)
+static int list_int_less_than(void *i1, void *i2)
 {
     return *(int *)i1 < *(int *)i2;
 }
@@ -494,7 +443,7 @@ void list_int_test()
     list_push_front(list, &int_array[8]);
     list_push_front(list, &int_array[9]);
     assert(list_size(list) == 10);
-    list_sort(list, __compare_int_less_than);
+    list_sort(list, list_int_less_than);
     assert(*(int*)list_at(list, 6) == 6);
     assert(*(int*)list_begin(list) == 0);
     assert(*(int*)list_next(list) == 1);

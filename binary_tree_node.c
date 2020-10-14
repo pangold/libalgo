@@ -179,22 +179,22 @@ static void binary_tree_node_post_order_2(binary_tree_node_t *root, void(*cb)(bi
     free(dummy);
 }
 
-inline static void binary_tree_node_in_order(binary_tree_node_t *root, void(*cb)(binary_tree_node_t *, void *), void *arg)
+static void binary_tree_node_in_order(binary_tree_node_t *root, void(*cb)(binary_tree_node_t *, void *), void *arg)
 {
     binary_tree_node_in_order_2(root, cb, arg);
 }
 
-inline static void binary_tree_node_pre_order(binary_tree_node_t *root, void(*cb)(binary_tree_node_t *, void *), void *arg)
+static void binary_tree_node_pre_order(binary_tree_node_t *root, void(*cb)(binary_tree_node_t *, void *), void *arg)
 {
     binary_tree_node_pre_order_2(root, cb, arg);
 }
 
-inline static void binary_tree_node_post_order(binary_tree_node_t *root, void(*cb)(binary_tree_node_t *, void *), void *arg)
+static void binary_tree_node_post_order(binary_tree_node_t *root, void(*cb)(binary_tree_node_t *, void *), void *arg)
 {
     binary_tree_node_post_order_2(root, cb, arg);
 }
 
-inline static binary_tree_node_t *binary_tree_node_alloc(void *data)
+static binary_tree_node_t *binary_tree_node_alloc(void *data)
 {
     binary_tree_node_t *node;
     node = (binary_tree_node_t *)malloc(sizeof(binary_tree_node_t));
@@ -205,7 +205,7 @@ inline static binary_tree_node_t *binary_tree_node_alloc(void *data)
     return node;
 }
 
-inline static void binary_tree_node_free(binary_tree_node_t *node, void *arg)
+static void binary_tree_node_free(binary_tree_node_t *node, void *arg)
 {
     if (!node) return;
     if (arg && node->data) {
@@ -216,12 +216,12 @@ inline static void binary_tree_node_free(binary_tree_node_t *node, void *arg)
     free(node);
 }
 
-inline static void binary_tree_node_clear(binary_tree_node_t *root, void(*dfree)(void *))
+static void binary_tree_node_clear(binary_tree_node_t *root, void(*dfree)(void *))
 {
     binary_tree_node_post_order_0(root, binary_tree_node_free, dfree);
 }
 
-inline static int binary_tree_node_size(binary_tree_node_t *root)
+static int binary_tree_node_size(binary_tree_node_t *root)
 {
     int size = 0;
     binary_tree_node_t *node;
@@ -230,7 +230,7 @@ inline static int binary_tree_node_size(binary_tree_node_t *root)
     return size;
 }
 
-inline static binary_tree_node_t *binary_tree_node_max(binary_tree_node_t *root)
+static binary_tree_node_t *binary_tree_node_max(binary_tree_node_t *root)
 {
     binary_tree_node_t *node;
     if (!root) return NULL;
@@ -238,7 +238,7 @@ inline static binary_tree_node_t *binary_tree_node_max(binary_tree_node_t *root)
     return node;
 }
 
-inline static binary_tree_node_t *binary_tree_node_min(binary_tree_node_t *root)
+static binary_tree_node_t *binary_tree_node_min(binary_tree_node_t *root)
 {
     binary_tree_node_t *node;
     if (!root) return NULL;
@@ -246,7 +246,7 @@ inline static binary_tree_node_t *binary_tree_node_min(binary_tree_node_t *root)
     return node;
 }
 
-inline static binary_tree_node_t *binary_tree_node_pre(binary_tree_node_t *root)
+static binary_tree_node_t *binary_tree_node_pre(binary_tree_node_t *root)
 {
     binary_tree_node_t *node;
     if (!root) return NULL;
@@ -255,7 +255,7 @@ inline static binary_tree_node_t *binary_tree_node_pre(binary_tree_node_t *root)
     return node;
 }
 
-inline static binary_tree_node_t *binary_tree_node_post(binary_tree_node_t *root)
+static binary_tree_node_t *binary_tree_node_post(binary_tree_node_t *root)
 {
     binary_tree_node_t *node;
     if (!root) return NULL;
@@ -264,7 +264,7 @@ inline static binary_tree_node_t *binary_tree_node_post(binary_tree_node_t *root
     return node;
 }
 
-inline static binary_tree_node_t *binary_tree_node_at(binary_tree_node_t *root, int n)
+static binary_tree_node_t *binary_tree_node_at(binary_tree_node_t *root, int n)
 {
     binary_tree_node_t *node;
     node = binary_tree_node_min(root);
@@ -272,7 +272,7 @@ inline static binary_tree_node_t *binary_tree_node_at(binary_tree_node_t *root, 
     return node;
 }
 
-inline static binary_tree_node_t *binary_tree_node_find(binary_tree_node_t *root, void *data, int(*cmp)(void *, void *))
+static binary_tree_node_t *binary_tree_node_find(binary_tree_node_t *root, void *data, int(*cmp)(void *, void *))
 {
     binary_tree_node_t *node;
     for (node = root; node; ) {
@@ -283,7 +283,7 @@ inline static binary_tree_node_t *binary_tree_node_find(binary_tree_node_t *root
     return NULL;
 }
 
-inline static void binary_tree_node_push(binary_tree_node_t **root, binary_tree_node_t *node, int(*cmp)(void *, void *))
+static void binary_tree_node_push(binary_tree_node_t **root, binary_tree_node_t *node, int(*cmp)(void *, void *))
 {
     binary_tree_node_t *temp, *parent = NULL;
     for (temp = *root; temp; ) {
@@ -300,7 +300,7 @@ inline static void binary_tree_node_push(binary_tree_node_t **root, binary_tree_
     }
 }
 
-inline static binary_tree_node_t *binary_tree_node_pop_leaf(binary_tree_node_t *node)
+static binary_tree_node_t *binary_tree_node_pop_leaf(binary_tree_node_t *node)
 {
     if (node->parent->left == node) {
         node->parent->left = NULL;
@@ -310,7 +310,7 @@ inline static binary_tree_node_t *binary_tree_node_pop_leaf(binary_tree_node_t *
     return NULL;
 }
 
-inline static binary_tree_node_t *binary_tree_node_pop_who_with_one_child(binary_tree_node_t *node)
+static binary_tree_node_t *binary_tree_node_pop_who_with_one_child(binary_tree_node_t *node)
 {
     binary_tree_node_t *child;
     child = node->left ? node->left : node->right;
@@ -323,7 +323,7 @@ inline static binary_tree_node_t *binary_tree_node_pop_who_with_one_child(binary
     return child;
 }
 
-inline static binary_tree_node_t *binary_tree_node_pop_who_with_children(binary_tree_node_t *node)
+static binary_tree_node_t *binary_tree_node_pop_who_with_children(binary_tree_node_t *node)
 {
     binary_tree_node_t *temp;
     // remove replaced node first
@@ -351,7 +351,7 @@ inline static binary_tree_node_t *binary_tree_node_pop_who_with_children(binary_
 /**
  * @return replaced node. NULL means leaf node
  */
-inline static binary_tree_node_t *binary_tree_node_pop(binary_tree_node_t **root, binary_tree_node_t *node)
+static binary_tree_node_t *binary_tree_node_pop(binary_tree_node_t **root, binary_tree_node_t *node)
 {
     binary_tree_node_t *temp = NULL;
     if (!node) {
@@ -369,14 +369,14 @@ inline static binary_tree_node_t *binary_tree_node_pop(binary_tree_node_t **root
     return temp;
 }
 
-inline static binary_tree_node_t *binary_tree_node_pop_front(binary_tree_node_t **root)
+static binary_tree_node_t *binary_tree_node_pop_front(binary_tree_node_t **root)
 {
     binary_tree_node_t *node;
     node = binary_tree_node_min(*root);
     return binary_tree_node_pop(root, node);
 }
 
-inline static binary_tree_node_t *binary_tree_node_pop_back(binary_tree_node_t **root)
+static binary_tree_node_t *binary_tree_node_pop_back(binary_tree_node_t **root)
 {
     binary_tree_node_t *node;
     node = binary_tree_node_max(*root);
@@ -392,7 +392,7 @@ void binary_tree_node_print(binary_tree_node_t *node, void *arg)
 {
     printf("%d ", *(int *)node->data);
 }
-int main(int argc, char **argv)
+void binary_tree_node_test()
 {
     int int_array[] = {6,4,3,2,7,5,9,0,1,8};
     binary_tree_node_t *root = binary_tree_node_alloc(&int_array[0]);
@@ -437,7 +437,5 @@ int main(int argc, char **argv)
     printf("\n");
 
     binary_tree_node_clear(root, NULL);
-
-    return 0;
 }
 #endif

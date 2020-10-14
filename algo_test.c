@@ -11,6 +11,10 @@
 #include "array.c"
 #endif
 
+#if defined(ENABLE_STACK_TEST)
+#include "stack.c"
+#endif
+
 #if defined(ENABLE_HEAP_TEST)
 #if !defined(ENABLE_ARRAY_TEST)
 #include "array.c"
@@ -20,27 +24,39 @@
 #endif
 
 #if defined(ENABLE_RBTREE_TEST)
-#if !defined(ENABLE_STACK_TEST)
 #if !defined(ENABLE_LIST_TEST)
 #include "list.c"
 #define ENABLE_LIST_TEST
 #endif
+#if !defined(ENABLE_STACK_TEST)
 #include "stack.c"
 #define ENABLE_STACK_TEST
 #endif
 #include "rb_tree.c"
 #endif
 
-#if defined(ENABLE_SORTED_SET_TEST)
-#if !defined(ENABLE_RBTREE_TEST)
-#if !defined(ENABLE_STACK_TEST)
+#if defined(ENABLE_BINARY_TREE_TEST)
 #if !defined(ENABLE_LIST_TEST)
 #include "list.c"
 #define ENABLE_LIST_TEST
 #endif
+#if !defined(ENABLE_STACK_TEST)
 #include "stack.c"
 #define ENABLE_STACK_TEST
 #endif
+#include "binary_tree_node.c"
+#endif
+
+#if defined(ENABLE_SORTED_SET_TEST)
+#if !defined(ENABLE_LIST_TEST)
+#include "list.c"
+#define ENABLE_LIST_TEST
+#endif
+#if !defined(ENABLE_STACK_TEST)
+#include "stack.c"
+#define ENABLE_STACK_TEST
+#endif
+#if !defined(ENABLE_RBTREE_TEST)
 #include "rb_tree.c"
 #define ENABLE_RBTREE_TEST
 #endif
@@ -48,15 +64,15 @@
 #endif
 
 #if defined(ENABLE_MAP_TEST)
-#if !defined(ENABLE_RBTREE_TEST)
-#if !defined(ENABLE_STACK_TEST)
 #if !defined(ENABLE_LIST_TEST)
 #include "list.c"
 #define ENABLE_LIST_TEST
 #endif
+#if !defined(ENABLE_STACK_TEST)
 #include "stack.c"
 #define ENABLE_STACK_TEST
 #endif
+#if !defined(ENABLE_RBTREE_TEST)
 #include "rb_tree.c"
 #define ENABLE_RBTREE_TEST
 #endif
@@ -88,6 +104,10 @@ int main(int argc, char **argv)
 
 #if defined(ENABLE_MAP_TEST)
     map_test();
+#endif
+
+#if defined(ENABLE_MAP_TEST)
+    binary_tree_node_test();
 #endif
 
     return 0;
